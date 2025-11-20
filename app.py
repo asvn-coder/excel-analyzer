@@ -8,8 +8,8 @@ load_dotenv()
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 
-# Only allow /analyze to accept external requests
-CORS(app, resources={r"/analyze": {"origins": "*"}})
+# Enable full CORS (correct)
+CORS(app)
 
 API_KEY = os.getenv("API_KEY")
 
@@ -57,6 +57,5 @@ def analyze():
     except Exception as e:
         return jsonify({"answer": f"❌ Backend Error: {str(e)}"})
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(debug=True)
