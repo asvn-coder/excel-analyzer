@@ -17,17 +17,13 @@ if not API_KEY:
 # Correct Gemini client for google-genai
 client = genai.Client(api_key=API_KEY)
 
-@app.route("/")
-def homepage():
-    return "Backend is running successfully!"
-
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
-@app.route("/ask-ai", methods=["POST"])
-def ask_ai():
+@app.route("/analyze", methods=["POST"])
+def analyze():
     try:
         data = request.json
         user_query = data.get("query", "")
