@@ -18,7 +18,7 @@ if not API_KEY:
 client = genai.Client(api_key=API_KEY)
 
 @app.route("/")
-def home():
+def homepage():
     return "Backend is running successfully!"
 
 
