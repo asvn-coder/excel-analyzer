@@ -6,22 +6,25 @@ import os
 
 load_dotenv()
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+app = Flask(__name__, static_folder="static", template_folder="templates")
+
+# Only allow /analyze to accept external requests
+CORS(app, resources={r"/analyze": {"origins": "*"}})
 
 API_KEY = os.getenv("API_KEY")
 
 if not API_KEY:
     raise Exception("❌ ERROR: API_KEY not found in .env file!")
 
-# Correct Gemini client for google-genai
+# Gemini client
 client = genai.Client(api_key=API_KEY)
 
-
+# FRONTEND ROUTE
 @app.route("/")
 def home():
     return render_template("index.html")
 
+# BACKEND ROUTE
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
@@ -56,4 +59,4 @@ def analyze():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=1000)
+    app.run(host="0.0.0.0", port=10000)
