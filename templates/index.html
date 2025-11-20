@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Smart Excel Analyzer{% endblock %}
+
+{% block content %}
+
+<!-- =================== UPLOAD SECTION =================== -->
+<section class="card upload-card">
+  <h2>1️⃣ Upload Excel File</h2>
+  <p class="muted">Upload .xlsx, .xls, or .csv file. Handles raw or unclean data automatically.</p>
+  <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" />
+  <button id="analyzeBtn" class="btn">Upload & Analyze</button>
+  <p id="statusText" class="muted small">No file uploaded yet.</p>
+</section>
+
+<!-- =================== ANALYSIS SUMMARY SECTION =================== -->
+<section class="card summary-card">
+  <h2>2️⃣ Analysis Summary</h2>
+  <div class="summary-grid">
+    <div>
+      <p class="muted">Total Rows</p>
+      <p id="totalRows">0</p>
+    </div>
+    <div>
+      <p class="muted">Total Columns</p>
+      <p id="totalCols">0</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== DATA PREVIEW SECTION =================== -->
+<section class="card table-card">
+  <h2>3️⃣ Data Preview (Scrollable)</h2>
+  <p id="previewInfo" class="muted small">No data available yet.</p>
+
+  <div id="tableWrapper" class="table-wrapper">
+    <table id="dataTable">
+      <thead id="dataHead"></thead>
+      <tbody id="dataBody"></tbody>
+    </table>
+  </div>
+
+  <div class="pagination-controls">
+    <button id="prevPage" class="btn small">⬅ Previous</button>
+    <span id="pageInfo" class="muted small">Page 1</span>
+    <button id="nextPage" class="btn small">Next ➡</button>
+  </div>
+</section>
+
+<!-- =================== QUERY SECTION =================== -->
+<section class="card query-card">
+  <h2>4️⃣ Ask Query About Data</h2>
+  <p class="muted">Example: “How many missing values?” or “Top 5 highest salary”</p>
+  <input type="text" id="queryInput" placeholder="Type your question here..." />
+  <button id="askBtn" class="btn">Get Insight</button>
+  <div id="insightBox" class="insight-box">
+    <p id="insightText" class="muted small">Insights will appear here after you ask a query.</p>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+<!-- Comment: Declaring HTML5 document -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Comment: Meta settings for responsive design -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Comment: Title block so child templates can update title -->
+  <title>{% block title %}Smart Excel Analyzer{% endblock %}</title>
+
+  <!-- Comment: Importing Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Comment: Linking external CSS -->
+  <link rel="stylesheet" href="/static/style.css">
+
+  <!-- Comment: Adding SheetJS library for Excel handling -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- =================== HEADER SECTION =================== -->
+    <header class="header">
+      <div>
+        <h1>📊 Smart Excel Analyzer</h1>
+        <p class="subtitle">Upload Excel → Analyze → Ask Queries → Get Insights</p>
+      </div>
+
+      <div class="theme-toggle">
+        <label for="themeSwitch">🌙 Dark Mode</label>
+        <input type="checkbox" id="themeSwitch" />
+      </div>
+    </header>
+
+    <!-- =================== PAGE CONTENT BLOCK (Important) =================== -->
+    {% block content %}{% endblock %}
+
+    <!-- =================== FOOTER SECTION =================== -->
+    <footer class="footer">
+      <div class="social-icons">
+        <a href="#"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/linkedin.svg"></a>
+        <a href="#"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg"></a>
+        <a href="#"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg"></a>
+      </div>
+      <p class="credit">Made by Ashvin Likhar • © <span id="year"></span></p>
+    </footer>
+
+  </div>
+
+  <!-- Comment: Linking JS file -->
+  <script src="/static/script.js"></script>
+
+</body>
+</html>

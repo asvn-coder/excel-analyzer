@@ -1,0 +1,182 @@
+/* Comment: Reset and global box sizing */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Comment: Light theme variables */
+:root {
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --text: #1e1e1e;
+  --muted: #6b7280;
+  --accent: #0078ff;
+  --shadow: rgba(0, 0, 0, 0.08);
+}
+
+/* Comment: Dark theme variables */
+:root.dark {
+  --bg: #0e1526;
+  --card: #151c2f;
+  --text: #e8e8e8;
+  --muted: #a5b2cc;
+  --accent: #00b3ff;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+
+/* Comment: Body styling */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 20px;
+  transition: background-color 0.1s linear, color 0.1s linear;
+}
+
+/* Comment: Container width */
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* Comment: Header section */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.subtitle { color: var(--muted); }
+
+/* Comment: Theme toggle */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.theme-toggle input {
+  width: 42px;
+  height: 22px;
+  border-radius: 20px;
+  appearance: none;
+  background: var(--muted);
+  position: relative;
+  cursor: pointer;
+}
+.theme-toggle input::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: all 0.25s ease-in-out;
+}
+:root.dark .theme-toggle input::after {
+  left: 22px;
+  background: var(--accent);
+}
+
+/* Comment: Card layout */
+.card {
+  background: var(--card);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px var(--shadow);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.muted { color: var(--muted); }
+.small { font-size: 0.9rem; }
+
+/* Comment: Buttons */
+.btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+.btn:hover { transform: scale(1.03); }
+.btn.small { padding: 6px 12px; font-size: 0.85rem; }
+
+/* Comment: Summary grid */
+.summary-grid {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+
+/* Comment: Table and scroll section */
+.table-wrapper {
+  background: var(--card);
+  border-radius: 10px;
+  overflow-y: auto;
+  max-height: 350px;
+  border: 1px solid #ccc;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+th {
+  background: var(--accent);
+  color: white;
+  position: sticky;
+  top: 0;
+}
+
+/* Comment: Pagination controls */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* Comment: Query section */
+.query-card input {
+  width: 80%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.insight-box {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(0, 120, 255, 0.08);
+}
+
+/* Comment: Footer styling */
+.footer {
+  text-align: center;
+  margin-top: 30px;
+  color: var(--muted);
+}
+.social-icons img {
+  width: 28px;
+  margin: 0 8px;
+  transition: transform 0.3s;
+}
+.social-icons img:hover { transform: scale(1.2); }
+.credit { margin-top: 10px; font-size: 0.9rem; }
+
+/* Comment: Responsive design */
+@media (max-width: 768px) {
+  .header { flex-direction: column; text-align: center; }
+  .query-card input { width: 100%; }
+}
