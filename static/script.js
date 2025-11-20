@@ -92,7 +92,7 @@ askBtn.addEventListener("click", async () => {
       sendData = sendData.slice(0, 200); // Prevent huge payload
     }
 
-    const response = await fetch("http://127.0.0.1:1000/ask-ai", {
+    const response = await fetch("https://excel-analyzer-2-lvvk.onrender.com/analyze", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
