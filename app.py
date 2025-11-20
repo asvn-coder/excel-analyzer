@@ -19,6 +19,11 @@ client = genai.Client(api_key=API_KEY)
 
 @app.route("/")
 def home():
+    return "Backend is running successfully!"
+
+
+@app.route("/")
+def home():
     return render_template("index.html")
 
 @app.route("/ask-ai", methods=["POST"])
