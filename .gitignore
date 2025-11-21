@@ -1,6 +1,8 @@
-# Python
+# Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
 # Virtual Environment
 venv/
@@ -14,3 +16,12 @@ venv/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+
+# Uploads folder (if created later)
+uploads/
+
+# Sample files if generated
+*.sample.*
