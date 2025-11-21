@@ -24,6 +24,7 @@ window.currentPage = 1;
 (function initTheme() {
   try {
     const saved = localStorage.getItem("theme");
+
     if (saved === "dark") {
       document.body.classList.add("dark-mode");
       if (themeSwitch) themeSwitch.checked = true;
@@ -31,8 +32,7 @@ window.currentPage = 1;
       if (themeSwitch) themeSwitch.checked = false;
     }
   } catch (e) {
-    // localStorage could be blocked on some environments; ignore
-    console.warn("Theme init:", e);
+    console.warn("Theme init error:", e);
   }
 
   if (themeSwitch) {
@@ -64,7 +64,6 @@ analyzeBtn.addEventListener("click", async () => {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     excelData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
 
-    // reset page
     window.currentPage = 1;
     renderTable();
 
@@ -72,7 +71,7 @@ analyzeBtn.addEventListener("click", async () => {
   } catch (err) {
     console.error(err);
     statusText.textContent = "❌ Error reading file.";
-    alert("Error reading file. Make sure it's a valid .xlsx .xls or .csv");
+    alert("Error reading file. Make sure it's a valid .xlsx, .xls, or .csv");
   } finally {
     analyzeBtn.disabled = false;
   }
@@ -110,7 +109,6 @@ function renderTable() {
   const pageSize = 200;
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
 
-  // clamp currentPage
   if (window.currentPage < 1) window.currentPage = 1;
   if (window.currentPage > totalPages) window.currentPage = totalPages;
 
@@ -119,8 +117,6 @@ function renderTable() {
 
   for (let i = start; i < end; i++) {
     const tr = document.createElement("tr");
-    // Some rows might not be arrays (sheet_to_json header:1 ensures arrays),
-    // guard against undefined
     const row = Array.isArray(rows[i]) ? rows[i] : [];
     headers.forEach((_, colIndex) => {
       const td = document.createElement("td");
@@ -135,9 +131,9 @@ function renderTable() {
     `Page ${window.currentPage} / ${totalPages}`;
 }
 
-// Wire pagination buttons (Prev / Next)
 const prevBtn = document.getElementById("prevPage");
 const nextBtn = document.getElementById("nextPage");
+
 if (prevBtn) {
   prevBtn.addEventListener("click", () => {
     if (window.currentPage > 1) {
@@ -147,12 +143,13 @@ if (prevBtn) {
     }
   });
 }
+
 if (nextBtn) {
   nextBtn.addEventListener("click", () => {
-    // compute total pages safely
     const rowsCount = (excelData && excelData.length > 1) ? excelData.length - 1 : 0;
     const pageSize = 200;
     const totalPages = Math.max(1, Math.ceil(rowsCount / pageSize));
+
     if (window.currentPage < totalPages) {
       window.currentPage++;
       renderTable();
@@ -172,10 +169,9 @@ askBtn.addEventListener("click", async () => {
   askBtn.disabled = true;
 
   try {
-    // Limit size before sending to backend — match backend cap (150)
     let sendData = excelData;
-    if (sendData.length > 151) { // header + 150 rows
-      sendData = sendData.slice(0, 151); // header + first 150 rows
+    if (sendData.length > 151) {
+      sendData = sendData.slice(0, 151);
     }
 
     const response = await fetch("/analyze", {
@@ -188,11 +184,7 @@ askBtn.addEventListener("click", async () => {
     });
 
     const data = await response.json();
-
-    // Backend returns { answer: "..." }
-    const raw = (data && (data.answer || data.result || data.text)) || "No response";
-
-    // Render answer as list if it looks like multi-line, else plain text
+    const raw = data.answer || "No response";
     renderInsight(raw);
 
   } catch (err) {
@@ -209,18 +201,12 @@ function renderInsight(text) {
     return;
   }
 
-  // Normalize line endings
   const normalized = text.replace(/\r\n/g, "\n").trim();
 
-  // If it already contains newline-separated lines or bullets, render as list
   if (normalized.includes("\n") || normalized.match(/[-•*]\s+/)) {
-    // split into lines and filter empty lines
     const lines = normalized.split("\n").map(l => l.trim()).filter(Boolean);
-
-    // If lines start with bullet-like char, strip it
     const cleanLines = lines.map(l => l.replace(/^[-•*]\s*/, ""));
 
-    // Build UL
     const ul = document.createElement("ul");
     cleanLines.forEach(l => {
       const li = document.createElement("li");
@@ -233,6 +219,5 @@ function renderInsight(text) {
     return;
   }
 
-  // Fallback: render as paragraph
   insightText.textContent = normalized;
 }

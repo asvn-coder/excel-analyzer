@@ -5,6 +5,16 @@
   box-sizing: border-box;
 }
 
+/* Dark Mode Fix — JS adds .dark-mode to <body> */
+body.dark-mode {
+  --bg: #0e1526;
+  --card: #151c2f;
+  --text: #e8e8e8;
+  --muted: #a5b2cc;
+  --accent: #00b3ff;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+
 /* Comment: Light theme variables */
 :root {
   --bg: #f6f8fb;
@@ -15,7 +25,7 @@
   --shadow: rgba(0, 0, 0, 0.08);
 }
 
-/* Comment: Dark theme variables */
+/* Comment: Dark theme variables (OLD VERSION — KEEPING IT SAFE) */
 :root.dark {
   --bg: #0e1526;
   --card: #151c2f;
