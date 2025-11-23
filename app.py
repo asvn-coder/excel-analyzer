@@ -15,11 +15,11 @@ API_KEY = os.getenv("API_KEY")
 if not API_KEY:
     raise Exception("❌ ERROR: API_KEY not found in .env file!")
 
-# Correct Gemini client initialization
+# Gemini client
 client = genai.Client(api_key=API_KEY)
 
 # ===================================================
-# CLEAN DATATYPES (Numeric, Datetime, Boolean)
+# CLEAN DATATYPES
 # ===================================================
 def clean_and_convert(df):
     for col in df.columns:
@@ -45,7 +45,6 @@ def clean_and_convert(df):
             df[col] = pd.to_datetime(s, errors="ignore")
 
     return df
-
 
 # ===================================================
 # ROUTES
@@ -76,21 +75,29 @@ def analyze():
         # Clean datatypes
         df = clean_and_convert(df)
 
-        # Reduce sample for AI
         sample = excel_data[:151]
 
-        # -------- USER QUERY ANSWER --------
-        prompt = (
+        # -------- INTELLIGENT FORMAT CONTROLLER --------
+        format_prompt = (
             "You are an Excel Data Analyzer.\n"
-            "Return insights in clean, short bullet points only.\n\n"
+            "IMPORTANT:\n"
+            "- Detect what format the user is asking for (bullet points, paragraph, table, numbered list, theory, explanation).\n"
+            "- ALWAYS respond in the SAME format the user requests.\n"
+            "- If user does NOT specify format, default to bullet points.\n\n"
+            "Examples:\n"
+            "User: give in paragraph → output must be paragraph.\n"
+            "User: give in table → output must be a table.\n"
+            "User: give in numbered list → 1. 2. 3.\n"
+            "User: give in bullets → - This… - This…\n"
+            "User: explain theory → paragraph theory explanation.\n\n"
             f"Sample Data:\n{sample}\n\n"
             f"User Question:\n{user_query}\n"
         )
 
-        # ⭐ Correct Google GenAI call
+        # Gemini Generate
         resp = client.models.generate_content(
             model="gemini-2.0-flash",
-            contents=prompt
+            contents=format_prompt
         )
 
         answer_text = resp.text if hasattr(resp, "text") else str(resp)
