@@ -1,4 +1,4 @@
-/* static/script.js (FINAL UPDATED WITH NO ERRORS) */
+/* static/script.js (FINAL CLEAN VERSION — NO COLUMN DETECTOR, NO SUMMARY) */
 
 const fileInput = document.getElementById("fileInput");
 const analyzeBtn = document.getElementById("analyzeBtn");
@@ -13,18 +13,15 @@ const queryInput = document.getElementById("queryInput");
 const insightText = document.getElementById("insightText");
 const themeSwitch = document.getElementById("themeSwitch");
 const yearEl = document.getElementById("year");
-const columnTypeList = document.getElementById("columnTypeList");
 
-// NEW: Sections for hide/show (SAFE MODE)
+// Sections
 const uploadSection = document.getElementById("uploadSection");
 const analysisSection = document.getElementById("analysisSection");
-const datasetSummarySection = document.getElementById("datasetSummarySection");
 const previewSection = document.getElementById("previewSection");
 const querySection = document.getElementById("querySection");
 
-// Hide sections safely
+// Hide all except upload
 if (analysisSection) analysisSection.classList.add("hidden");
-if (datasetSummarySection) datasetSummarySection.classList.add("hidden");
 if (previewSection) previewSection.classList.add("hidden");
 if (querySection) querySection.classList.add("hidden");
 
@@ -93,62 +90,27 @@ analyzeBtn.addEventListener("click", async () => {
 });
 
 /* -----------------------------
-   Backend Analyze
+   Backend Analyze (ONLY for AI query)
 ----------------------------- */
 async function analyzeBackend() {
   try {
     let sendData = excelData;
     if (sendData.length > 151) sendData = sendData.slice(0, 151);
 
-    const response = await fetch("/analyze", {
+    await fetch("/analyze", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: "", excelData: sendData })
     });
 
-    const data = await response.json();
-    const columnTypes = data.columnTypes || {};
-    const aiSummary = data.aiSummary || "No summary";
-
-    renderColumnTypes(columnTypes);
-    renderDatasetSummary(aiSummary);
-
-    // Safely show sections
+    // Show sections after upload
     if (analysisSection) analysisSection.classList.remove("hidden");
-    if (datasetSummarySection) datasetSummarySection.classList.remove("hidden");
     if (previewSection) previewSection.classList.remove("hidden");
     if (querySection) querySection.classList.remove("hidden");
 
   } catch (error) {
     console.error(error);
     statusText.textContent = "❌ Backend error.";
-  }
-}
-
-/* -----------------------------
-   Render Column Types
------------------------------ */
-function renderColumnTypes(types) {
-  columnTypeList.innerHTML = "";
-  if (!types || Object.keys(types).length === 0) {
-    columnTypeList.innerHTML = "<li>No column type data available.</li>";
-    return;
-  }
-  Object.entries(types).forEach(([col, type]) => {
-    const li = document.createElement("li");
-    li.textContent = `${col}: ${type}`;
-    li.style.fontWeight = "500";
-    columnTypeList.appendChild(li);
-  });
-}
-
-/* -----------------------------
-   Dataset Summary
------------------------------ */
-function renderDatasetSummary(text) {
-  const box = document.getElementById("datasetSummaryText");
-  if (box) {
-    box.innerHTML = text.replace(/\n/g, "<br>");
   }
 }
 
@@ -224,8 +186,7 @@ if (prevBtn) {
 
 if (nextBtn) {
   nextBtn.addEventListener("click", () => {
-    const rowsCount =
-      excelData && excelData.length > 1 ? excelData.length - 1 : 0;
+    const rowsCount = excelData.length > 1 ? excelData.length - 1 : 0;
     const pageSize = 200;
     const totalPages = Math.max(1, Math.ceil(rowsCount / pageSize));
 

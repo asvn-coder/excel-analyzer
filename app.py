@@ -19,7 +19,7 @@ if not API_KEY:
 client = genai.Client(api_key=API_KEY)
 
 # ===================================================
-# CLEAN & FIX DATATYPES (Numeric, Datetime, Boolean)
+# CLEAN DATATYPES (Numeric, Datetime, Boolean)
 # ===================================================
 def clean_and_convert(df):
     for col in df.columns:
@@ -40,32 +40,12 @@ def clean_and_convert(df):
         if s.dtype == object:
             df[col] = pd.to_numeric(s, errors="ignore")
 
-        # DATETIME FIX (safe)
+        # DATETIME FIX
         if s.dtype == object:
             df[col] = pd.to_datetime(s, errors="ignore")
 
     return df
 
-# ===================================================
-# SMART COLUMN DETECTOR
-# ===================================================
-def detect_column_types(df):
-    types = {}
-    for col in df.columns:
-        s = df[col]
-
-        if pd.api.types.is_numeric_dtype(s):
-            types[col] = "Numeric"
-        elif pd.api.types.is_datetime64_any_dtype(s):
-            types[col] = "Datetime"
-        elif pd.api.types.is_bool_dtype(s):
-            types[col] = "Boolean"
-        elif s.dtype == object:
-            types[col] = "Categorical" if s.nunique() < 50 else "Text/Mixed"
-        else:
-            types[col] = "Unknown"
-
-    return types
 
 # ===================================================
 # ROUTES
@@ -73,6 +53,7 @@ def detect_column_types(df):
 @app.route("/")
 def home():
     return render_template("index.html")
+
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
@@ -95,51 +76,31 @@ def analyze():
         # Clean datatypes
         df = clean_and_convert(df)
 
-        # Detect column types
-        column_types = detect_column_types(df)
-
         # Reduce sample for AI
         sample = excel_data[:151]
 
-        # -------- AI DATASET SUMMARY --------
-        summary_prompt = (
-            "Summarize this dataset in 5–7 short bullet points.\n"
-            "Explain the topic, patterns, important columns, purpose, abnormalities.\n\n"
-            f"Column Types:\n{column_types}\n\n"
-            f"Sample Data:\n{sample}\n"
-        )
-
-        summary_resp = client.generate_content(
-            model="gemini-2.0-flash",
-            contents=summary_prompt
-        )
-
-        ai_summary = getattr(summary_resp, "text", None) or str(summary_resp)
-
         # -------- USER QUERY ANSWER --------
         prompt = (
-            "You are an Excel Analysis AI.\n"
-            "Return insights in clean bullet points.\n\n"
-            f"Column Types:\n{column_types}\n\n"
+            "You are an Excel Data Analyzer.\n"
+            "Return insights in clean, short bullet points.\n\n"
             f"Sample Data:\n{sample}\n\n"
             f"User Question:\n{user_query}\n"
         )
 
-        resp = client.generate_content(
+        resp = client.text.generate(
             model="gemini-2.0-flash",
-            contents=prompt
+            text=prompt
         )
 
         answer_text = getattr(resp, "text", None) or str(resp)
 
         return jsonify({
-            "answer": answer_text,
-            "columnTypes": column_types,
-            "aiSummary": ai_summary
+            "answer": answer_text
         })
 
     except Exception as e:
         return jsonify({"answer": f"❌ Backend Error: {str(e)}"})
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,6 +1,3 @@
-/* Updated style.css with Column Detector Styling */
-/* (Your original CSS preserved, only safe additions made) */
-
 /* Comment: Reset and global box sizing */
 * {
   margin: 0;
@@ -18,7 +15,7 @@ body.dark-mode {
   --shadow: rgba(0, 0, 0, 0.5);
 }
 
-/* Comment: Light theme variables */
+/* Light Theme Variables */
 :root {
   --bg: #f6f8fb;
   --card: #ffffff;
@@ -28,17 +25,7 @@ body.dark-mode {
   --shadow: rgba(0, 0, 0, 0.08);
 }
 
-/* Comment: Dark theme variables (OLD VERSION — KEEPING IT SAFE) */
-:root.dark {
-  --bg: #0e1526;
-  --card: #151c2f;
-  --text: #e8e8e8;
-  --muted: #a5b2cc;
-  --accent: #00b3ff;
-  --shadow: rgba(0, 0, 0, 0.5);
-}
-
-/* Comment: Body styling */
+/* Body Styling */
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg);
@@ -48,13 +35,13 @@ body {
   transition: background-color 0.1s linear, color 0.1s linear;
 }
 
-/* Comment: Container width */
+/* Container */
 .container {
   max-width: 1000px;
   margin: auto;
 }
 
-/* Comment: Header section */
+/* Header */
 .header {
   display: flex;
   justify-content: space-between;
@@ -63,7 +50,7 @@ body {
 }
 .subtitle { color: var(--muted); }
 
-/* Comment: Theme toggle */
+/* Theme Toggle */
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -89,12 +76,8 @@ body {
   left: 2px;
   transition: all 0.25s ease-in-out;
 }
-:root.dark .theme-toggle input::after {
-  left: 22px;
-  background: var(--accent);
-}
 
-/* Comment: Card layout */
+/* Card Layout */
 .card {
   background: var(--card);
   border-radius: 10px;
@@ -105,7 +88,7 @@ body {
 .muted { color: var(--muted); }
 .small { font-size: 0.9rem; }
 
-/* Comment: Buttons */
+/* Buttons */
 .btn {
   background: var(--accent);
   color: #fff;
@@ -119,14 +102,14 @@ body {
 .btn:hover { transform: scale(1.03); }
 .btn.small { padding: 6px 12px; font-size: 0.85rem; }
 
-/* Comment: Summary grid */
+/* Summary Grid */
 .summary-grid {
   display: flex;
   justify-content: space-around;
   text-align: center;
 }
 
-/* Comment: Table and scroll section */
+/* Table */
 .table-wrapper {
   background: var(--card);
   border-radius: 10px;
@@ -150,7 +133,7 @@ th {
   top: 0;
 }
 
-/* Comment: Pagination controls */
+/* Pagination */
 .pagination-controls {
   display: flex;
   justify-content: center;
@@ -159,7 +142,7 @@ th {
   margin-top: 12px;
 }
 
-/* Comment: Query section */
+/* Query Section */
 .query-card input {
   width: 80%;
   padding: 10px;
@@ -174,7 +157,7 @@ th {
   background: rgba(0, 120, 255, 0.08);
 }
 
-/* Comment: Footer styling */
+/* Footer */
 .footer {
   text-align: center;
   margin-top: 30px;
@@ -188,55 +171,13 @@ th {
 .social-icons img:hover { transform: scale(1.2); }
 .credit { margin-top: 10px; font-size: 0.9rem; }
 
-/* Comment: Responsive design */
+/* Responsive */
 @media (max-width: 768px) {
   .header { flex-direction: column; text-align: center; }
   .query-card input { width: 100%; }
 }
 
-/* ============================================== */
-/* NEW STYLES FOR COLUMN TYPE DETECTOR SECTION     */
-/* ============================================== */
-
-.column-type-box {
-  background: var(--card);
-  padding: 18px;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px var(--shadow);
-  margin-top: 15px;
-  border-left: 4px solid var(--accent);
-}
-
-.column-type-box h3 {
-  font-weight: 700;
-  margin-bottom: 8px;
-  color: var(--text);
-}
-
-#columnTypeList {
-  margin-top: 10px;
-  padding-left: 20px;
-}
-
-#columnTypeList li {
-  margin-bottom: 4px;
-  font-size: 0.95rem;
-  color: var(--text);
-  font-weight: 500;
-}
-
-.summary-card ul li {
-  list-style: disc;
-}
-
-body.dark-mode .column-type-box {
-  background: var(--card);
-  border-left-color: var(--accent);
-}
-
-/* ============================================== */
-/* REQUIRED FOR: Hide sections until upload        */
-/* ============================================== */
+/* ✔ REQUIRED: Hide sections until upload */
 .hidden {
   display: none;
 }
