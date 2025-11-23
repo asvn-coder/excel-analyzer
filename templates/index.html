@@ -5,7 +5,7 @@
 {% block content %}
 
 <!-- =================== UPLOAD SECTION =================== -->
-<section class="card upload-card">
+<section class="card upload-card" id="uploadSection">
   <h2>1️⃣ Upload Excel File</h2>
   <p class="muted">Upload .xlsx, .xls, or .csv file. Handles raw or unclean data automatically.</p>
   <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" />
@@ -14,23 +14,42 @@
 </section>
 
 <!-- =================== ANALYSIS SUMMARY SECTION =================== -->
-<section class="card summary-card">
+<section class="card summary-card hidden" id="analysisSection">
   <h2>2️⃣ Analysis Summary</h2>
+
+  <!-- Row + Column Count -->
   <div class="summary-grid">
     <div>
-      <p class="muted">Total Rows</p>
-      <p id="totalRows">0</p>
+      <p class="muted" style="font-weight:600;">Total Rows</p>
+      <p id="totalRows" style="font-weight:700;">0</p>
     </div>
     <div>
-      <p class="muted">Total Columns</p>
-      <p id="totalCols">0</p>
+      <p class="muted" style="font-weight:600;">Total Columns</p>
+      <p id="totalCols" style="font-weight:700;">0</p>
     </div>
+  </div>
+
+  <!-- SMART COLUMN DETECTOR SECTION -->
+  <div class="column-type-box" style="margin-top:20px; padding:15px; border-radius:10px;">
+    <h3 style="margin-bottom:10px; font-size:1.1rem; font-weight:700;">📌 Column Type Detection</h3>
+    <p class="muted small">Detected data types for each column:</p>
+
+    <ul id="columnTypeList" style="margin-top:10px; line-height:1.6;"></ul>
+  </div>
+</section>
+
+<!-- =================== DATASET SUMMARY (AI) =================== -->
+<section class="card summary-card hidden" id="datasetSummarySection">
+  <h2>3️⃣ Dataset Summary (AI)</h2>
+
+  <div id="datasetSummaryText" class="muted small">
+    Dataset summary will appear here after upload.
   </div>
 </section>
 
 <!-- =================== DATA PREVIEW SECTION =================== -->
-<section class="card table-card">
-  <h2>3️⃣ Data Preview</h2>
+<section class="card table-card hidden" id="previewSection">
+  <h2>4️⃣ Data Preview</h2>
   <p id="previewInfo" class="muted small">No data available yet.</p>
 
   <div id="tableWrapper" class="table-wrapper">
@@ -48,8 +67,8 @@
 </section>
 
 <!-- =================== QUERY SECTION =================== -->
-<section class="card query-card">
-  <h2>4️⃣ Ask Query About Data</h2>
+<section class="card query-card hidden" id="querySection">
+  <h2>5️⃣ Ask Query About Data</h2>
   <p class="muted">Example: “Top 5 highest salary”</p>
   <input type="text" id="queryInput" placeholder="Type your question here..." />
   <button id="askBtn" class="btn">Get Insight</button>

@@ -1,3 +1,6 @@
+/* Updated style.css with Column Detector Styling */
+/* (Your original CSS preserved, only safe additions made) */
+
 /* Comment: Reset and global box sizing */
 * {
   margin: 0;
@@ -189,4 +192,51 @@ th {
 @media (max-width: 768px) {
   .header { flex-direction: column; text-align: center; }
   .query-card input { width: 100%; }
+}
+
+/* ============================================== */
+/* NEW STYLES FOR COLUMN TYPE DETECTOR SECTION     */
+/* ============================================== */
+
+.column-type-box {
+  background: var(--card);
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px var(--shadow);
+  margin-top: 15px;
+  border-left: 4px solid var(--accent);
+}
+
+.column-type-box h3 {
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+#columnTypeList {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+#columnTypeList li {
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.summary-card ul li {
+  list-style: disc;
+}
+
+body.dark-mode .column-type-box {
+  background: var(--card);
+  border-left-color: var(--accent);
+}
+
+/* ============================================== */
+/* REQUIRED FOR: Hide sections until upload        */
+/* ============================================== */
+.hidden {
+  display: none;
 }

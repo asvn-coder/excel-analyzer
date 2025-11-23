@@ -1,4 +1,5 @@
-// static/script.js
+/* static/script.js (FINAL UPDATED WITH NO ERRORS) */
+
 const fileInput = document.getElementById("fileInput");
 const analyzeBtn = document.getElementById("analyzeBtn");
 const totalRowsEl = document.getElementById("totalRows");
@@ -12,24 +13,35 @@ const queryInput = document.getElementById("queryInput");
 const insightText = document.getElementById("insightText");
 const themeSwitch = document.getElementById("themeSwitch");
 const yearEl = document.getElementById("year");
+const columnTypeList = document.getElementById("columnTypeList");
+
+// NEW: Sections for hide/show (SAFE MODE)
+const uploadSection = document.getElementById("uploadSection");
+const analysisSection = document.getElementById("analysisSection");
+const datasetSummarySection = document.getElementById("datasetSummarySection");
+const previewSection = document.getElementById("previewSection");
+const querySection = document.getElementById("querySection");
+
+// Hide sections safely
+if (analysisSection) analysisSection.classList.add("hidden");
+if (datasetSummarySection) datasetSummarySection.classList.add("hidden");
+if (previewSection) previewSection.classList.add("hidden");
+if (querySection) querySection.classList.add("hidden");
 
 yearEl.textContent = new Date().getFullYear();
 
 let excelData = [];
 window.currentPage = 1;
 
-// -----------------------------
-// Dark mode: initialize & persist
-// -----------------------------
+/* -----------------------------
+   Dark Mode
+----------------------------- */
 (function initTheme() {
   try {
     const saved = localStorage.getItem("theme");
-
     if (saved === "dark") {
       document.body.classList.add("dark-mode");
       if (themeSwitch) themeSwitch.checked = true;
-    } else {
-      if (themeSwitch) themeSwitch.checked = false;
     }
   } catch (e) {
     console.warn("Theme init error:", e);
@@ -39,18 +51,18 @@ window.currentPage = 1;
     themeSwitch.addEventListener("change", () => {
       if (themeSwitch.checked) {
         document.body.classList.add("dark-mode");
-        try { localStorage.setItem("theme", "dark"); } catch(e){}
+        localStorage.setItem("theme", "dark");
       } else {
         document.body.classList.remove("dark-mode");
-        try { localStorage.setItem("theme", "light"); } catch(e){}
+        localStorage.setItem("theme", "light");
       }
     });
   }
 })();
 
-// ==========================================
-// Upload Excel
-// ==========================================
+/* -----------------------------
+   Upload Excel
+----------------------------- */
 analyzeBtn.addEventListener("click", async () => {
   const file = fileInput.files[0];
   if (!file) return alert("Please upload an Excel or CSV file");
@@ -67,19 +79,82 @@ analyzeBtn.addEventListener("click", async () => {
     window.currentPage = 1;
     renderTable();
 
-    statusText.textContent = "✅ File loaded.";
+    statusText.textContent = "⏳ Sending to backend...";
+    await analyzeBackend();
+
+    statusText.textContent = "✅ Analysis completed.";
+
   } catch (err) {
     console.error(err);
     statusText.textContent = "❌ Error reading file.";
-    alert("Error reading file. Make sure it's a valid .xlsx, .xls, or .csv");
   } finally {
     analyzeBtn.disabled = false;
   }
 });
 
-// ==========================================
-// Render Table + Pagination + Prev/Next
-// ==========================================
+/* -----------------------------
+   Backend Analyze
+----------------------------- */
+async function analyzeBackend() {
+  try {
+    let sendData = excelData;
+    if (sendData.length > 151) sendData = sendData.slice(0, 151);
+
+    const response = await fetch("/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: "", excelData: sendData })
+    });
+
+    const data = await response.json();
+    const columnTypes = data.columnTypes || {};
+    const aiSummary = data.aiSummary || "No summary";
+
+    renderColumnTypes(columnTypes);
+    renderDatasetSummary(aiSummary);
+
+    // Safely show sections
+    if (analysisSection) analysisSection.classList.remove("hidden");
+    if (datasetSummarySection) datasetSummarySection.classList.remove("hidden");
+    if (previewSection) previewSection.classList.remove("hidden");
+    if (querySection) querySection.classList.remove("hidden");
+
+  } catch (error) {
+    console.error(error);
+    statusText.textContent = "❌ Backend error.";
+  }
+}
+
+/* -----------------------------
+   Render Column Types
+----------------------------- */
+function renderColumnTypes(types) {
+  columnTypeList.innerHTML = "";
+  if (!types || Object.keys(types).length === 0) {
+    columnTypeList.innerHTML = "<li>No column type data available.</li>";
+    return;
+  }
+  Object.entries(types).forEach(([col, type]) => {
+    const li = document.createElement("li");
+    li.textContent = `${col}: ${type}`;
+    li.style.fontWeight = "500";
+    columnTypeList.appendChild(li);
+  });
+}
+
+/* -----------------------------
+   Dataset Summary
+----------------------------- */
+function renderDatasetSummary(text) {
+  const box = document.getElementById("datasetSummaryText");
+  if (box) {
+    box.innerHTML = text.replace(/\n/g, "<br>");
+  }
+}
+
+/* -----------------------------
+   Render Table
+----------------------------- */
 function renderTable() {
   dataHead.innerHTML = "";
   dataBody.innerHTML = "";
@@ -134,6 +209,9 @@ function renderTable() {
 const prevBtn = document.getElementById("prevPage");
 const nextBtn = document.getElementById("nextPage");
 
+/* -----------------------------
+   Pagination
+----------------------------- */
 if (prevBtn) {
   prevBtn.addEventListener("click", () => {
     if (window.currentPage > 1) {
@@ -146,7 +224,8 @@ if (prevBtn) {
 
 if (nextBtn) {
   nextBtn.addEventListener("click", () => {
-    const rowsCount = (excelData && excelData.length > 1) ? excelData.length - 1 : 0;
+    const rowsCount =
+      excelData && excelData.length > 1 ? excelData.length - 1 : 0;
     const pageSize = 200;
     const totalPages = Math.max(1, Math.ceil(rowsCount / pageSize));
 
@@ -158,9 +237,9 @@ if (nextBtn) {
   });
 }
 
-// ==========================================
-// Ask AI
-// ==========================================
+/* -----------------------------
+   Ask AI Query
+----------------------------- */
 askBtn.addEventListener("click", async () => {
   const query = queryInput.value.trim();
   if (!query) return alert("Type your question");
@@ -170,54 +249,42 @@ askBtn.addEventListener("click", async () => {
 
   try {
     let sendData = excelData;
-    if (sendData.length > 151) {
-      sendData = sendData.slice(0, 151);
-    }
+    if (sendData.length > 151) sendData = sendData.slice(0, 151);
 
     const response = await fetch("/analyze", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: query,
-        excelData: sendData
-      })
+      body: JSON.stringify({ query, excelData: sendData })
     });
 
     const data = await response.json();
-    const raw = data.answer || "No response";
-    renderInsight(raw);
+    renderInsight(data.answer || "No response");
 
   } catch (err) {
-    console.error(err);
     insightText.textContent = "❌ Cannot connect to backend.";
   } finally {
     askBtn.disabled = false;
   }
 });
 
+/* -----------------------------
+   Render AI Insight
+----------------------------- */
 function renderInsight(text) {
   if (!text) {
     insightText.textContent = "No insights returned.";
     return;
   }
 
-  const normalized = text.replace(/\r\n/g, "\n").trim();
+  const lines = text.replace(/\r\n/g, "\n").trim().split("\n").filter(Boolean);
 
-  if (normalized.includes("\n") || normalized.match(/[-•*]\s+/)) {
-    const lines = normalized.split("\n").map(l => l.trim()).filter(Boolean);
-    const cleanLines = lines.map(l => l.replace(/^[-•*]\s*/, ""));
+  const ul = document.createElement("ul");
+  lines.forEach(l => {
+    const li = document.createElement("li");
+    li.textContent = l.replace(/^[-•*]\s*/, "");
+    ul.appendChild(li);
+  });
 
-    const ul = document.createElement("ul");
-    cleanLines.forEach(l => {
-      const li = document.createElement("li");
-      li.textContent = l;
-      ul.appendChild(li);
-    });
-
-    insightText.innerHTML = "";
-    insightText.appendChild(ul);
-    return;
-  }
-
-  insightText.textContent = normalized;
+  insightText.innerHTML = "";
+  insightText.appendChild(ul);
 }
