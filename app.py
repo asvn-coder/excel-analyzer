@@ -82,17 +82,18 @@ def analyze():
         # -------- USER QUERY ANSWER --------
         prompt = (
             "You are an Excel Data Analyzer.\n"
-            "Return insights in clean, short bullet points.\n\n"
+            "Return insights in clean, short bullet points only.\n\n"
             f"Sample Data:\n{sample}\n\n"
             f"User Question:\n{user_query}\n"
         )
 
-        resp = client.text.generate(
+        # ⭐ Correct Google GenAI call
+        resp = client.models.generate_content(
             model="gemini-2.0-flash",
-            text=prompt
+            contents=prompt
         )
 
-        answer_text = getattr(resp, "text", None) or str(resp)
+        answer_text = resp.text if hasattr(resp, "text") else str(resp)
 
         return jsonify({
             "answer": answer_text

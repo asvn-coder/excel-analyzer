@@ -1,4 +1,4 @@
-/* static/script.js (FINAL CLEAN VERSION — NO COLUMN DETECTOR, NO SUMMARY) */
+/* static/script.js (FINAL CLEAN VERSION — FIXED INSIGHT PARSER) */
 
 const fileInput = document.getElementById("fileInput");
 const analyzeBtn = document.getElementById("analyzeBtn");
@@ -168,12 +168,12 @@ function renderTable() {
     `Page ${window.currentPage} / ${totalPages}`;
 }
 
-const prevBtn = document.getElementById("prevPage");
-const nextBtn = document.getElementById("nextPage");
-
 /* -----------------------------
    Pagination
 ----------------------------- */
+const prevBtn = document.getElementById("prevPage");
+const nextBtn = document.getElementById("nextPage");
+
 if (prevBtn) {
   prevBtn.addEventListener("click", () => {
     if (window.currentPage > 1) {
@@ -229,12 +229,17 @@ askBtn.addEventListener("click", async () => {
 });
 
 /* -----------------------------
-   Render AI Insight
+   Render AI Insight  (FIXED)
 ----------------------------- */
 function renderInsight(text) {
   if (!text) {
     insightText.textContent = "No insights returned.";
     return;
+  }
+
+  // FIX: ensure always string
+  if (typeof text !== "string") {
+    text = JSON.stringify(text, null, 2);
   }
 
   const lines = text.replace(/\r\n/g, "\n").trim().split("\n").filter(Boolean);
